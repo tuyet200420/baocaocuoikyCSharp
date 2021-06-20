@@ -99,7 +99,7 @@ namespace TestUngDung.Areas.Admin.Controllers
                 SetAlert("Cập Nhật Sản Phẩm Thành Công", "success");
                 return RedirectToAction("Index");
             }
-            setViewBag(sp.ID);
+           // setViewBag(sp.ID);
             return View();
         }
         public JsonResult Delete(System.Int32 id)
