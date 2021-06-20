@@ -1,0 +1,125 @@
+﻿@model List<ModelEF.ViewModel.ProductModel>
+
+
+@{
+    ViewBag.Title = "Quản Lý Sản Phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section header{
+    <i class="fa fa-apple"></i>&nbsp; Quản Lý Sản Phẩm
+}
+@using (Html.BeginForm("Index", "Product", FormMethod.Post))
+{
+    <div class="col-lg-12 form-group">
+        <div class="col-md-6">
+            @Html.ActionLink("Tạo mới", "Create", "Product", new { @class = "btn btn-danger" })
+        </div>
+        <div class="col-md-4">
+            <input type="text" value="@ViewBag.searchString" name="searchString" placeholder="Nhập từ khóa tìm kiếm" class="form-control" style="cursor:pointer" />
+        </div>
+        <div class="col-md-2">
+            <input type="submit" vaule="Tìm kiếm" class="btn btn-default" />
+        </div>
+    </div>
+}
+<div class="col-lg-12 form-group">
+    <table class="table table-bordered">
+        <tr>
+            <th>
+                STT
+            </th>
+            <th>
+                Sản Phẩm
+            </th>
+            <th>
+                Đơn Giá
+            </th>
+            <th>
+                Số Lượng
+            <th>
+                Trạng Thái
+            </th>
+            <th>
+                Danh Mục
+            </th>
+            <th>Hàng Động</th>
+            <th>
+                Xem Chi Tiết
+            </th>
+        </tr>
+        @{ var i = 1;}
+        @foreach (var item in Model)
+        {
+            <tr id="row_@item.ID">
+                <td>
+                    @i
+                </td>
+                <td>
+                    @item.Name
+                </td>
+                <td>
+                    @string.Format("{0:0,0.}", @item.UnitCost)
+                </td>
+                <td>
+                    @item.Quantity
+                </td>
+                @if (@item.Status == 1)
+                {
+                    <td>
+                        Ẩn
+                    </td>
+                }
+                @if (@item.Status == 0)
+                {
+                    <td>
+                        Hiển Thị
+                    </td>
+                }
+                <td>
+                    @item.category_name
+                </td>
+                <td>
+                    <a href="@Url.Action("Edit", "Product", new { id = @item.ID })" class="btn btn-primary" style="font-size:12px;"><i class="fa fa-edit"></i></a>
+                    <a onclick="PopupDelete(@item.ID)" class="btn btn-danger" style="cursor:pointer; font-size:12px;"><i class="fa fa-trash-o"></i></a>
+                </td>
+                <td>
+                    <a href="@Url.Action("Index", "DetailProduct", new { id = @item.ID })" class="btn btn-primary" style="font-size:12px;"><i class="fa fa-eye-slash"></i></a>
+                </td>
+            </tr>
+            i++;
+        }
+
+    </table>
+</div>
+<script>
+    function PopupDelete(id) {
+        Swal.fire({
+            title: 'Bạn có chắc chắn xóa sản phẩm này không',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Đồng ý',
+            cancelButtonText: 'Hủy',
+        }).then((result) => {
+            if (result.value) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Product/Delete",
+                    data: { id: id },
+                    success: function (result) {
+                        Swal.fire(
+                            'Thành Công!',
+                            'Bạn đã xóa thành công',
+                            'success'
+                        );
+                        $("#row_" + id).remove();
+
+                    }
+                })
+
+            }
+        })
+    }
+</script>
